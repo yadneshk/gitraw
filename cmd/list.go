@@ -16,7 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"context"
+	gitraw "gitraw/pkg"
 
 	"github.com/spf13/cobra"
 )
@@ -31,9 +32,8 @@ var (
 For example:
 $ gitraw list -r <username>/<repository_name> -b <branch>`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("list called", args)
-			fmt.Println("list called", branchFlag)
-			fmt.Println("list called", repositoryFlag)
+			ctx := context.Background()
+			gitraw.ListContents(ctx, repositoryFlag, branchFlag, args)
 		},
 	}
 
