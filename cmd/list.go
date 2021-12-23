@@ -30,28 +30,20 @@ var (
 		Long: `List files and directories of a repository.
 
 For example:
-$ gitraw list -r <username>/<repository_name> -b <branch>`,
+$ gitraw list -r <username>/<repository_name> -b <branch>
+`,
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
 			gitraw.ListContents(ctx, repositoryFlag, branchFlag, args)
 		},
 	}
-
-	branchFlag     string
-	repositoryFlag string
 )
 
 func init() {
 	rootCmd.AddCommand(listCmd)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
 	listCmd.PersistentFlags().StringVarP(&repositoryFlag, "repository", "r", "", "<username>/<repository_name>")
 	listCmd.MarkPersistentFlagRequired("repository")
-	listCmd.Flags().StringVarP(&branchFlag, "branch", "b", "master", "branch")
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	listCmd.Flags().StringVarP(&branchFlag, "branch", "b", "master", "branch")
 }
