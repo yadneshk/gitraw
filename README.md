@@ -28,3 +28,9 @@ List files and directory of a repository
     issues/
     learn-k8s/
     prometheus_k8s/
+
+Get files from a repository
+
+    $  $GOPATH/bin/gitraw get --repository yadneshk/k8s-cluster-deploy --branch main  --output-dir ~/Downloads/ deploy-k8s/bash-scripts/setup-master.sh
+    $ ls ~/Downloads/setup-master.sh 
+    /home/ykulkarn/Downloads/setup-master.sh
