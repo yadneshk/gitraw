@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/google/go-github/github"
@@ -103,4 +104,52 @@ func ListContents(ctx context.Context, repository, branch string, paths []string
 			}
 		}
 	}
+}
+
+func DownloadContents(ctx context.Context, repository, branch, destination string, paths []string) {
+	repoObject, err := RepoExists(ctx, repository, branch)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	if len(paths) == 0 {
+		paths = append(paths, "/")
+	}
+	for _, path := range paths {
+		fileContent, dirContent, _, err := client.Repositories.GetContents(
+			ctx, repoObject.owner, repoObject.repo, path,
+			GetRepositoryContentGetOptions(repoObject.branch),
+		)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		// unempty fileContent would mean it's a file
+		if fileContent != nil {
+			DownloadFile(destination, fileContent)
+		}
+
+		// unempty dirContent would mean it's a directory
+		if dirContent != nil {
+			fmt.Printf("dirContent=%s\n", dirContent)
+		}
+	}
+}
+
+func DownloadFile(destination string, fileContent *github.RepositoryContent) error {
+	f, err := os.Create(filepath.Join(destination, *fileContent.Path))
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	content, err := fileContent.GetContent()
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprint(f, content)
+
+	return nil
 }
