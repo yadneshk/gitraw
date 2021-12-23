@@ -138,17 +138,18 @@ func DownloadContents(ctx context.Context, repository, branch, destination strin
 }
 
 func DownloadFile(destination string, fileContent *github.RepositoryContent) error {
-	f, err := os.Create(filepath.Join(destination, *fileContent.Path))
+	f, err := os.Create(filepath.Join(destination, *fileContent.Name))
 	if err != nil {
-		return err
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	defer f.Close()
 
 	content, err := fileContent.GetContent()
 	if err != nil {
-		return err
+		fmt.Println(err)
+		os.Exit(1)
 	}
-
 	fmt.Fprint(f, content)
 
 	return nil
