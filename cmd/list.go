@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"context"
-	gitraw "gitraw/pkg"
+	gitraw "gitraw/pkg/gitraw"
 
 	"github.com/spf13/cobra"
 )
