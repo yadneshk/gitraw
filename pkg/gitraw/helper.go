@@ -77,7 +77,8 @@ func GetRepositoryContentGetOptions(ref string) *github.RepositoryContentGetOpti
 }
 
 func DownloadFile(destination string, fileContent *github.RepositoryContent) error {
-	f, err := os.Create(filepath.Join(destination, *fileContent.Name))
+	destPath := filepath.Join(destination, *fileContent.Name)
+	f, err := os.Create(destPath)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -90,6 +91,41 @@ func DownloadFile(destination string, fileContent *github.RepositoryContent) err
 		os.Exit(1)
 	}
 	fmt.Fprint(f, content)
+	fmt.Println(destPath)
+
+	return nil
+}
+
+func DownloadDir(repoObject *Repo, destination string, paths []string, ctx context.Context) error {
+
+	for _, path := range paths {
+		fileContent, dirContent, _, err := client.Repositories.GetContents(
+			ctx, repoObject.owner, repoObject.repo, path,
+			GetRepositoryContentGetOptions(repoObject.branch),
+		)
+		if err != nil {
+			return err
+		}
+		// unempty fileContent would mean it's a file
+		if fileContent != nil {
+			DownloadFile(destination, fileContent)
+		}
+
+		// unempty dirContent would mean it's a directory
+		for _, con := range dirContent {
+			dirPath := filepath.Join(destination, *con.Name)
+			if *con.Type == "dir" {
+				err := os.Mkdir(dirPath, 0755)
+				if err != nil {
+					return err
+				}
+				DownloadDir(repoObject, dirPath, []string{*con.Path}, ctx)
+			} else if *con.Type == "file" {
+				DownloadFile(destination, con)
+			}
+
+		}
+	}
 
 	return nil
 }

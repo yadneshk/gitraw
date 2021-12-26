@@ -46,23 +46,9 @@ func DownloadContents(ctx context.Context, repository, branch, destination strin
 	if len(paths) == 0 {
 		paths = append(paths, "/")
 	}
-	for _, path := range paths {
-		fileContent, dirContent, _, err := client.Repositories.GetContents(
-			ctx, repoObject.owner, repoObject.repo, path,
-			GetRepositoryContentGetOptions(repoObject.branch),
-		)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		// unempty fileContent would mean it's a file
-		if fileContent != nil {
-			DownloadFile(destination, fileContent)
-		}
-
-		// unempty dirContent would mean it's a directory
-		if dirContent != nil {
-			fmt.Printf("dirContent=%s\n", dirContent)
-		}
+	err = DownloadDir(repoObject, destination, paths, ctx)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
