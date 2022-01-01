@@ -41,11 +41,7 @@ var (
 func init() {
 	rootCmd.AddCommand(getCmd)
 
-	getCmd.PersistentFlags().StringVarP(&repositoryFlag, "repository", "r", "", "<username>/<repository_name>")
-	getCmd.MarkPersistentFlagRequired("repository")
-
 	getCmd.PersistentFlags().StringVarP(&destDir, "output-dir", "o", "", "Output directory for downloaded content")
 	getCmd.MarkPersistentFlagRequired("output-dir")
 
-	getCmd.Flags().StringVarP(&branchFlag, "branch", "b", "master", "branch")
 }

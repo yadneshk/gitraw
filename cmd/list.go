@@ -42,8 +42,4 @@ $ gitraw list -r <username>/<repository_name> -b <branch>
 func init() {
 	rootCmd.AddCommand(listCmd)
 
-	listCmd.PersistentFlags().StringVarP(&repositoryFlag, "repository", "r", "", "<username>/<repository_name>")
-	listCmd.MarkPersistentFlagRequired("repository")
-
-	listCmd.Flags().StringVarP(&branchFlag, "branch", "b", "master", "branch")
 }
